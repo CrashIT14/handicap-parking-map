@@ -1,5 +1,8 @@
 package se.creotec.ctkhandicapmap.controller;
 
+import android.content.Context;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
@@ -45,6 +48,12 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         mapFragment.getMapAsync(this);
     }
 
+    private boolean isConnected() {
+        ConnectivityManager connMgr = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo networkInfo = connMgr.getActiveNetworkInfo();
+        return networkInfo != null && networkInfo.isConnected();
+    }
+
     @Override
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
@@ -52,7 +61,9 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         // Move camera to show CTK's office
         mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(ctkOffice, 14));
 
-        new DownloadParkingDataAsync().execute();
+        if (isConnected()) {
+            new DownloadParkingDataAsync().execute();
+        }
     }
 
     public class DownloadParkingDataAsync extends AsyncTask<Void, Void, List<IHandicapParking>> {
