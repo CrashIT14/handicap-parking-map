@@ -1,4 +1,4 @@
-package se.creotec.ctkhandicapmap;
+package se.creotec.ctkhandicapmap.model;
 
 /**
  * @author Alexander Håkansson

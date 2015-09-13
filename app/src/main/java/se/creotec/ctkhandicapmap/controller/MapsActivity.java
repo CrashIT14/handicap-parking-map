@@ -1,13 +1,10 @@
-package se.creotec.ctkhandicapmap;
+package se.creotec.ctkhandicapmap.controller;
 
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.JsonReader;
-import android.view.Menu;
-import android.view.MenuInflater;
-import android.view.MenuItem;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -23,6 +20,11 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
+
+import se.creotec.ctkhandicapmap.Constants;
+import se.creotec.ctkhandicapmap.R;
+import se.creotec.ctkhandicapmap.model.HandicapParking;
+import se.creotec.ctkhandicapmap.model.IHandicapParking;
 
 public class MapsActivity extends AppCompatActivity implements OnMapReadyCallback {
 
@@ -47,7 +49,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
         mMap.setMyLocationEnabled(true);
-        // Move camera to show Göteborg
+        // Move camera to show CTK's office
         mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(ctkOffice, 14));
 
         new DownloadParkingDataAsync().execute();
@@ -69,20 +71,20 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
             }
         }
 
-        private List<IHandicapParking> readJson(InputStream is) throws IOException{
+        private List<IHandicapParking> parseJSON(InputStream is) throws IOException{
             List<IHandicapParking> resultList = new ArrayList<>();
             JsonReader reader = new JsonReader(new InputStreamReader(is, "UTF-8"));
             reader.setLenient(true);
 
             reader.beginArray();
             while (reader.hasNext()) {
-                resultList.add(readParkingSpot(reader));
+                resultList.add(parseParkingSpot(reader));
             }
             reader.endArray();
             return resultList;
         }
 
-        private IHandicapParking readParkingSpot(JsonReader reader) throws IOException{
+        private IHandicapParking parseParkingSpot(JsonReader reader) throws IOException{
             String id = null;
             String name = null;
             String maxParkingTime = null;
@@ -114,19 +116,18 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         }
 
         private List<IHandicapParking> getParkingSpots() throws IOException {
-
-            URL url = new URL(Constants.HANDICAP_API_URL + Constants.GBG_API_KEY + "?format=JSON");
+            String apiURL = Constants.HANDICAP_API_URL.replace(Constants.API_KEY_PLACEHOLDER, Constants.GBG_API_KEY);
+            URL url = new URL(apiURL);
             HttpURLConnection conn = (HttpURLConnection) url.openConnection();
-            conn.setReadTimeout(10000); /* milliseconds */
-            conn.setConnectTimeout(10000); /* milliseconds */
+            conn.setReadTimeout(Constants.CONNECTION_TIMEOUT); /* milliseconds */
+            conn.setConnectTimeout(Constants.CONNECTION_TIMEOUT); /* milliseconds */
             conn.setRequestMethod("GET");
             // Starts the query
             conn.connect();
             int response = conn.getResponseCode();
-
             // HTTP response 200 = OK
             if (response == 200) {
-                return readJson(conn.getInputStream());
+                return parseJSON(conn.getInputStream());
             } else {
                 throw new IOException();
             }

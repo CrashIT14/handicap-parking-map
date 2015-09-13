@@ -7,7 +7,8 @@ import java.net.URL;
  * @since 2015-09-13
  */
 public class Constants {
-    public static String HANDICAP_API_URL = "http://data.goteborg.se/ParkingService/v2.1/HandicapParkings/";
+    public static String HANDICAP_API_URL = "http://data.goteborg.se/ParkingService/v2.1/HandicapParkings/{APIKEY}?format=JSON";
+    public static String API_KEY_PLACEHOLDER = "{APIKEY}";
     public static String GBG_API_KEY = "bbfb13cc-994c-4a5a-924e-85a5760b6e4c";
 
     public static String KEY_ID = "Id";
@@ -16,4 +17,6 @@ public class Constants {
     public static String KEY_LAT = "Lat";
     public static String KEY_LONG = "Long";
     public static String KEY_PARKING_SPACES = "ParkingSpaces";
+
+    public static int CONNECTION_TIMEOUT = 10000;
 }
