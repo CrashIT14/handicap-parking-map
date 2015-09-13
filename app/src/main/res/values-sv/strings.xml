@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">CTK Handikapskarta</string>
+    <string name="max_parking">Max parkeringstid:</string>
+    <string name="parking_count">Parkeringsplatser:</string>
+    <string name="refresh">Uppdatera</string>
+</resources>

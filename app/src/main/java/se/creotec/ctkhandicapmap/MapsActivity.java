@@ -16,20 +16,18 @@ import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 
-import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
-import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 
 public class MapsActivity extends AppCompatActivity implements OnMapReadyCallback {
 
     private GoogleMap mMap;
-    private LatLng goteborg = new LatLng(57.714244, 11.975393);
+    private LatLng ctkOffice = new LatLng(57.690292, 11.972511);
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -46,40 +44,11 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
     }
 
     @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu items for use in the action bar
-        MenuInflater inflater = getMenuInflater();
-        inflater.inflate(R.menu.main_menu, menu);
-        return super.onCreateOptionsMenu(menu);
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle presses on the action bar items
-        switch (item.getItemId()) {
-            case R.id.action_refresh:
-                // TODO: Refresh data
-                return true;
-            default:
-                return super.onOptionsItemSelected(item);
-        }
-    }
-
-    /**
-     * Manipulates the map once available.
-     * This callback is triggered when the map is ready to be used.
-     * This is where we can add markers or lines, add listeners or move the camera. In this case,
-     * we just add a marker near Sydney, Australia.
-     * If Google Play services is not installed on the device, the user will be prompted to install
-     * it inside the SupportMapFragment. This method will only be triggered once the user has
-     * installed Google Play services and returned to the app.
-     */
-    @Override
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
         mMap.setMyLocationEnabled(true);
         // Move camera to show Göteborg
-        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(goteborg, 12));
+        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(ctkOffice, 14));
 
         new DownloadParkingDataAsync().execute();
     }
@@ -165,10 +134,12 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
 
         @Override
         protected void onPostExecute(List<IHandicapParking> iHandicapParkings) {
+            mMap.clear();
             for (IHandicapParking parking : iHandicapParkings) {
                 mMap.addMarker(new MarkerOptions()
                         .title(parking.getName())
-                        .snippet(parking.getMaxParkingTime() + " | " +parking.getTotalParkingCount())
+                        .snippet(getString(R.string.parking_count) + " " + parking.getTotalParkingCount() + ", "
+                                + getString(R.string.max_parking) + " " + parking.getMaxParkingTime())
                         .position(new LatLng(parking.getLatitude(), parking.getLongitude())));
             }
         }
