@@ -17,6 +17,7 @@ import com.google.android.gms.maps.model.MarkerOptions;
 public class MapsActivity extends AppCompatActivity implements OnMapReadyCallback {
 
     private GoogleMap mMap;
+    private LatLng goteborg = new LatLng(57.714244, 11.975393);
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -64,10 +65,8 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
     @Override
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
-
-        // Add a marker in Sydney and move the camera
-        LatLng sydney = new LatLng(-34, 151);
-        mMap.addMarker(new MarkerOptions().position(sydney).title("Marker in Sydney"));
-        mMap.moveCamera(CameraUpdateFactory.newLatLng(sydney));
+        mMap.setMyLocationEnabled(true);
+        // Move camera to show Göteborg
+        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(goteborg, 12));
     }
 }
